@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
 
@@ -14,21 +13,34 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "role")
-public class Role implements GrantedAuthority {
+@Table(name = "oauth_profile")
+public class OauthProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "role_name", unique = true, nullable = false, length = 64)
-    private String authority;
+    @Column(length = 32, nullable = false)
+    private String provider;
 
-    @CreationTimestamp
+    @Column(name = "oauth_username", length = 128, nullable = false)
+    private String oauthUsername;
+
+    @Column(name = "access_key", length = 512)
+    private String accessKey;
+
+    @Column(name = "refresh_key", length = 512)
+    private String refreshKey;
+
     @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
     private Date createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
     private Date updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 }

@@ -4,13 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate deploy",
-    "migrate:prod": "dotenv -e .env.prod -- npx prisma migrate deploy"
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.prod -- npx prisma migrate dev"
   },
-  "keywords": ["airbnb-clone", "prisma", "mysql"],
+  "keywords": [
+    "airbnb-clone",
+    "prisma",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^4.14.1",
     "@types/node": "^20.2.3",
     "prisma": "^4.14.1",
     "ts-node": "^10.9.1",

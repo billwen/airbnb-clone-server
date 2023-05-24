@@ -1,0 +1,43 @@
+spring:
+  thymeleaf:
+    cache: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/airbnb-dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: ${DB_USERNAME:airbnb}
+    password: ${DB_PASSWORD}
+    hikari:
+      pool-name: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 4096
+        useServerPrepStmts: true
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        connection:
+          autocommit: true
+        generate_statistics: false
+        id:
+          new_generator_mappings: true
+        jdbc:
+          batch_size: 25
+        order_updates: true
+        order_inserts: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          in_clause_parameter_padding: true
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.jdbc.core: TRACE
+    com.guludoc: DEBUG

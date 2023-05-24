@@ -2,10 +2,65 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+/// Account
+model Account {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  username String @unique @db.VarChar(64)
+
+  email String? @db.VarChar(128)
+
+  password String @map("hashed_passwd") @db.VarChar(128)
+
+  accountNonExpired Boolean @default(true) @map("no_expired")
+
+  accountNonLocked Boolean @default(true) @map("no_locked")
+
+  credentialsNonExpired Boolean @default(true) @map("no_passwd_expired")
+
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  roles AccountsOnRoles[]
+
+  @@map("account")
+}
+
+model Role {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  roleName String @unique @map("role_name") @db.VarChar(64)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  accounts AccountsOnRoles[]
+
+  @@map("role")
+}
+
+model AccountsOnRoles {
+  accountId BigInt @map("account_id")
+
+  roleId BigInt @map("role_id")
+
+  account Account @relation(fields: [accountId], references: [id])
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([accountId, roleId])
+  @@map("int_accounts_roles")
 }
