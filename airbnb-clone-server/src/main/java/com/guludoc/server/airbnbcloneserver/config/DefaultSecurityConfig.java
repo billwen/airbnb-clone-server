@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Map;
@@ -64,7 +65,7 @@ public class DefaultSecurityConfig {
     @Bean
     @Order(10)
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(AntPathRequestMatcher.antMatcher("/dev/**"))
+        http.securityMatcher( "/dev/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .csrf(csrf -> csrf.disable());
 
