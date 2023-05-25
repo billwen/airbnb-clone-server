@@ -7,11 +7,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Profile("!prod")
 @Configuration
-@Order(10)
 public class DevSecurityConfig {
 
-    @Bean
+//    @Bean
+//    @Order(2)
     public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/dev/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
