@@ -9,6 +9,18 @@ spring:
     use-code-as-default-message: false
     always-use-message-format: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_OAUTH_CLIENTID}
+            client-secret: ${GOOGLE_OAUTH_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+
 logging:
   pattern:
     console: '%clr(%d{E HH:mm:ss.SSS}){blue} %clr(%-5p) %clr(${PID}){faint} %clr(---){faint} %clr([%8.15t]){cyan} %clr(%-40.40logger{0}){blue} %clr(:){red} %clr(%m){faint}%n'
