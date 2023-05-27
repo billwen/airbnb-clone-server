@@ -1,6 +1,7 @@
 package com.guludoc.server.airbnbcloneserver.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,4 +32,10 @@ public class Role implements GrantedAuthority {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
+
+    public static Role of(@NotNull String authority) {
+        Role role = new Role();
+        role.setAuthority(authority);
+        return role;
+    }
 }

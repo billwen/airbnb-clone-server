@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -30,21 +31,27 @@ public class Account implements UserDetails {
     @Column(length = 128)
     private String email;
 
+    @JsonIgnore
     @Column(name = "hashed_passwd", length = 128)
     private String password;
 
+    @JsonIgnore
     @Column(name = "no_expired", nullable = false)
     private boolean accountNonExpired;
 
+    @JsonIgnore
     @Column(name = "no_locked", nullable = false)
     private boolean accountNonLocked;
 
+    @JsonIgnore
     @Column(name = "no_passwd_expired", nullable = false)
     private boolean credentialsNonExpired;
 
+    @JsonIgnore
     @Column(nullable = false)
     private boolean enabled;
 
+    @JsonIgnore
     @Column(name = "jwt_key", length = 128)
     private String jwtKey;
 
@@ -66,4 +73,21 @@ public class Account implements UserDetails {
 
     @OneToMany(mappedBy = "account")
     private Set<OauthProfile> oauthProfiles;
+
+    public static Account of(Set<Role> roles, String username, String email, String hashed_password, String jwtKey) {
+        Account account = new Account();
+        account.setUsername(username);
+        account.setEmail(email);
+        account.setPassword(hashed_password);
+        account.setJwtKey(jwtKey);
+        account.setAuthorities(roles);
+
+        // Default values
+        account.setAccountNonExpired(true);
+        account.setAccountNonLocked(true);
+        account.setCredentialsNonExpired(true);
+        account.setEnabled(true);
+
+        return account;
+    }
 }

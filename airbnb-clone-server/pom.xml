@@ -128,7 +128,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>src/main/resources/public</outputDirectory>
+							<outputDirectory>src/main/resources/static</outputDirectory>
 							<overwrite>true</overwrite>
 							<resources>
 								<resource>
@@ -138,6 +138,10 @@
 										<include>static/</include>
 										<include>index.html</include>
 										<include>robots.txt</include>
+										<include>manifest.json</include>
+										<include>favicon.ico</include>
+										<include>logo192.png</include>
+										<include>logo512.png</include>
 									</includes>
 								</resource>
 							</resources>

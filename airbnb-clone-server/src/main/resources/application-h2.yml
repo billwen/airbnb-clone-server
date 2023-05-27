@@ -13,7 +13,7 @@ spring:
   h2:
     console:
       enabled: true
-      path: /dev/h2
+      path: /h2
       settings:
         trace: false
         web-allow-others: false

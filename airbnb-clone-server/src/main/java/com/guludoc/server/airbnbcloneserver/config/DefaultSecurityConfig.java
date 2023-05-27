@@ -1,9 +1,8 @@
 package com.guludoc.server.airbnbcloneserver.config;
 
-import com.guludoc.server.airbnbcloneserver.security.JwtFilter;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
@@ -18,14 +17,12 @@ import org.springframework.security.crypto.password.MessageDigestPasswordEncoder
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 import java.util.Map;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DefaultSecurityConfig {
 
@@ -42,9 +39,9 @@ public class DefaultSecurityConfig {
     }
 
     @Bean
-    @Order(1)
+    @Order(SecurityProperties.BASIC_AUTH_ORDER - 20)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/**")
+        http.securityMatchers((matchers) -> matchers.requestMatchers("/api/**"))
                 .csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(((request, response, authException) -> response.setHeader("WWW-Authenticate", "Basic realm=SignIn")))
@@ -55,47 +52,50 @@ public class DefaultSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/signin").authenticated()
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(server -> server.jwt())
                 .httpBasic();
 
-        JwtFilter jwtFilter = new JwtFilter();
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-
         return http.build();
     }
 
-    @Profile("!prod")
-    @Bean
-    @Order(10)
-    public SecurityFilterChain devSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher( "/dev/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(csrf -> csrf.disable());
-
-        return http.build();
-    }
+    private static final String[] AUTH_WHITELIST = {
+            "/",
+            "/index.html",
+            "/error"
+    };
 
     @Bean
-    @Order(100)
+    @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/error").permitAll()
-                .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults());
+        http.authorizeHttpRequests(auth ->
+                        auth.requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
+
+    private static final String[] AUTH_IGNORELIST = {
+            "/public/**",
+            "/static/**",
+            "/images/**",
+            "/manifest.json",
+            "/favicon.ico",
+            "/logo192.png",
+            "/logo512.png"
+    };
 
     /**
      * The WebSecurityCustomizer is a callback interface that can be used to customize WebSecurity.
      * @return WebSecurityCustomizer
      */
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> {
             web.ignoring()
-                    .requestMatchers("/public/**");
+                    .requestMatchers(AUTH_IGNORELIST)
+                    .requestMatchers(toH2Console());
         };
     }
 }
