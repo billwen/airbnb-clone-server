@@ -71,7 +71,7 @@ public class Account implements UserDetails {
     )
     private Set<Role> authorities;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<OauthProfile> oauthProfiles;
 
     public static Account of(Set<Role> roles, String username, String email, String hashed_password, String jwtKey) {

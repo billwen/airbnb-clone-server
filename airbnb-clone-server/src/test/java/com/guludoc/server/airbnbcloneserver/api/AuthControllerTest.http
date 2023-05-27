@@ -1,0 +1,35 @@
+### Create a demo user
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Gang",
+  "email": "gang.wen@gmail.com",
+  "password": "password"
+}
+
+### Should get correctly
+GET http://localhost:8080/api/auth/signup
+Accept: application/json
+Authorization: Basic Gang password
+
+### Acquire JWT token
+### OAUTH2_TOKEN=$(http --body POST :8080/token --auth Gang:password)
+POST http://localhost:8080/api/auth/token
+Accept: application/json
+Authorization: Basic Gang password
+
+### Use Token to get messages
+### http :8080/api/auth/signup "Authorization: Bearer $OAUTH2_TOKEN"
+GET http://localhost:8080/api/auth/signup
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJHYW5nIiwic3ViIjoiR2FuZyIsImV4cCI6MTY4NTI1MTc0NywiaWF0IjoxNjg1MjE1NzQ3LCJzY29wZSI6IlVTRVIifQ.bbVAtujQVhwV2oaKIltBg8pT92J04aljw6zF3pLwgk6ZZYfgSuUNHOzSZoR6fd5jjd4v_pB-kezqM9NQsiLd_2TaJkVFgjGh7sjQJg3BWTYIaoqJl25dw0_5MnNJTx3tZmQRT2dWh0R9PlTarC7H9XDksGFsuT71FQU05TUic_sc59Hw9UIMjvMLDmUQavVtgYQILxd_LQ7Z-yqLc7jNcLUST2lNZ0I7H0mPovHz1XCooWxBQSBI_r-jYizFf7_vm3_TLDngb9issRCuIbqGP-arlbBk8ZIh9zEYAdN3qYowHJiG9flYvEC1RKFY1OwqyVABdNeynnIlqL0wSSRT5Q
+
+### Create another demo user without full fields
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Tan",
+  "email": "tan.wen@gmail.com"
+}
