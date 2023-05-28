@@ -1,8 +1,11 @@
 package com.guludoc.server.airbnbcloneserver.api;
 
+import com.guludoc.server.airbnbcloneserver.config.AppAuthParam;
 import com.guludoc.server.airbnbcloneserver.entity.Account;
+import com.guludoc.server.airbnbcloneserver.entity.dto.OAuth2AuthorizationCode;
 import com.guludoc.server.airbnbcloneserver.entity.dto.SignupRequest;
 import com.guludoc.server.airbnbcloneserver.service.DataAccessService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
@@ -30,6 +33,8 @@ public class AuthController {
 
     private final JwtEncoder encoder;
 
+    private final AppAuthParam authParam;
+
     @GetMapping(value = "/signin")
     public ResponseEntity<String> login() {
         return new ResponseEntity<>("OK", HttpStatus.OK);
@@ -41,7 +46,7 @@ public class AuthController {
      * @return Pair<String, Optional<Account>>
      */
     @PostMapping(value = "/signup")
-    public ResponseEntity<Pair<String, Optional<Account>>> register(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Pair<String, Optional<Account>>> register(@Valid @RequestBody SignupRequest signupRequest) {
 
         try {
             Account account = dataAccessService.signup(signupRequest);
@@ -56,6 +61,11 @@ public class AuthController {
         return new ResponseEntity<>("Signed in", HttpStatus.OK);
     }
 
+    /**
+     * Local user to JWT token
+     * @param authentication Web
+     * @return token
+     */
     @PostMapping("/token")
     public String token(Authentication authentication) {
         Instant now = Instant.now();
@@ -74,5 +84,16 @@ public class AuthController {
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    /**
+     * Exchange external OAuth2 token for local generated token
+     * @param jwt
+     * @return String
+     */
+    @PostMapping("/social")
+    public ResponseEntity<String> oauth2Token(@Valid @RequestBody OAuth2AuthorizationCode jwt) {
+        log.info("{}", authParam);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 }

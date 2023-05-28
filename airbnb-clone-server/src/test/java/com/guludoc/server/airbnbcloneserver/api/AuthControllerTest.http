@@ -20,11 +20,29 @@ Authorization: Basic Gang password
 GET http://localhost:8080/api/me
 Authorization: Bearer {{auth_token}}
 
+### Google login
+POST http://localhost:8080/api/auth/social
+Content-Type: application/json
+
+{
+  "provider": "google",
+  "authorizationCode": "gang.wen@gmail.com"
+}
+
+
 ### Get JWT Token
 GET http://localhost:8080/api/auth/signup
 Accept: application/json
 Authorization: Basic Gang password
 
+### Invalid oauth2token request
+POST http://localhost:8080/api/auth/oauth2token
+Content-Type: application/json
+Accept: application/json
+
+{
+   "provider": "google"
+}
 
 ### Use Token to get messages
 ### http :8080/api/auth/signup "Authorization: Bearer $OAUTH2_TOKEN"

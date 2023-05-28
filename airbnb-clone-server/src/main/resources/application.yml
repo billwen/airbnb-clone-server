@@ -19,10 +19,13 @@ app:
     jwt:
       private-key: classpath:app.key
       public-key: classpath:app.pub
-    provider:
+      access-token-expiry-in-seconds: 60
+      refresh-token-expiry-in-hours: 3600
+
+    providers:
       google:
-        client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
-        client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
+        client-id: ${GOOGLE_OAUTH_CLIENT_ID}
+        client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET}
       github:
         client-id: ${OAUTH2_GITHUB_CLIENT_ID}
         client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET}
