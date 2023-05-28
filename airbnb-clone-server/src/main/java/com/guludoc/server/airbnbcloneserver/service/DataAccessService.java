@@ -49,4 +49,8 @@ public class DataAccessService {
                 );
         return accountRepository.save(account);
     }
+
+    public Optional<Account> findAccountByUsername(String username) {
+        return accountRepository.findByUsername(username);
+    }
 }

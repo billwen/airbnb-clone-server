@@ -32,6 +32,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -81,12 +85,12 @@ public class DefaultSecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(@Value("${jwt.public.key}") RSAPublicKey publicKey) {
+    public JwtDecoder jwtDecoder(@Value("${app.auth.jwt.public-key}") RSAPublicKey publicKey) {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(@Value("${jwt.public.key}") RSAPublicKey publicKey, @Value("${jwt.private.key}") RSAPrivateKey privateKey) {
+    public JwtEncoder jwtEncoder(@Value("${app.auth.jwt.public-key}") RSAPublicKey publicKey, @Value("${app.auth.jwt.private-key}") RSAPrivateKey privateKey) {
         JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
@@ -132,5 +136,16 @@ public class DefaultSecurityConfig {
                     .requestMatchers(AUTH_IGNORELIST)
                     .requestMatchers(toH2Console());
         };
+    }
+
+    public CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.setAllowCredentials(true);
+        source.registerCorsConfiguration("/api/**",config);
+        return source;
     }
 }

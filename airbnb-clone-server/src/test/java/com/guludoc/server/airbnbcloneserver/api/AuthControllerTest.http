@@ -8,16 +8,23 @@ Content-Type: application/json
   "password": "password"
 }
 
-### Should get correctly
-GET http://localhost:8080/api/auth/signup
-Accept: application/json
-Authorization: Basic Gang password
-
 ### Acquire JWT token
 ### OAUTH2_TOKEN=$(http --body POST :8080/token --auth Gang:password)
 POST http://localhost:8080/api/auth/token
 Accept: application/json
 Authorization: Basic Gang password
+
+> {% client.global.set("auth_token", response.body); %}
+
+### Access secure endpoints
+GET http://localhost:8080/api/me
+Authorization: Bearer {{auth_token}}
+
+### Get JWT Token
+GET http://localhost:8080/api/auth/signup
+Accept: application/json
+Authorization: Basic Gang password
+
 
 ### Use Token to get messages
 ### http :8080/api/auth/signup "Authorization: Bearer $OAUTH2_TOKEN"
@@ -33,3 +40,6 @@ Content-Type: application/json
   "name": "Tan",
   "email": "tan.wen@gmail.com"
 }
+
+### Get access token from oauth2 server
+### OAUTH2_TOKEN=$(http -auth spring:secret -f POST :9090/oauth2/token grant_trype=client_credientials | jq -r '.acces_token')
