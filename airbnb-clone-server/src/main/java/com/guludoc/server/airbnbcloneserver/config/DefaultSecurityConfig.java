@@ -62,9 +62,12 @@ public class DefaultSecurityConfig {
     @Order(SecurityProperties.BASIC_AUTH_ORDER - 20)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatchers((matchers) -> matchers.requestMatchers("/api/**"))
+                .cors(cors -> {
+                    cors.configurationSource(corsConfigurationSource());
+                })
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling()
-                .authenticationEntryPoint(((request, response, authException) -> response.setHeader("WWW-Authenticate", "Basic realm=SignIn")))
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

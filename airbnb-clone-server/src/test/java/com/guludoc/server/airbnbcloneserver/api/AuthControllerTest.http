@@ -26,9 +26,20 @@ Content-Type: application/json
 
 {
   "provider": "google",
-  "authorizationCode": "gang.wen@gmail.com"
+  "code": "4/0AbUR2VNgbRNCZr-DG3BaTeoApatKBe79ZG96V-hDY6TVhDodftvpzY1Z0NutGeZBAjLvAA",
+  "scope": "email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
 }
 
+### wrong Google login
+POST http://localhost:8080/api/auth/social
+Content-Type: application/json
+
+{
+  "code": "4/0AbUR2VNOvFINTHxiL3c3uHaLVZt7XwZnXke_nFgVFhC5ZWa9SXjebjX6YeecPEFfGP5Rjg",
+  "scope": "email profile openid https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+  "authuser": "0",
+  "prompt": "consent"
+}
 
 ### Get JWT Token
 GET http://localhost:8080/api/auth/signup

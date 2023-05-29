@@ -5,6 +5,7 @@ import com.guludoc.server.airbnbcloneserver.entity.Account;
 import com.guludoc.server.airbnbcloneserver.entity.dto.OAuth2AuthorizationCode;
 import com.guludoc.server.airbnbcloneserver.entity.dto.SignupRequest;
 import com.guludoc.server.airbnbcloneserver.service.DataAccessService;
+import com.guludoc.server.airbnbcloneserver.service.GoogleOAuth2Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +37,8 @@ public class AuthController {
     private final JwtEncoder encoder;
 
     private final AppAuthParam authParam;
+
+    private final GoogleOAuth2Service google;
 
     @GetMapping(value = "/signin")
     public ResponseEntity<String> login() {
@@ -92,8 +97,10 @@ public class AuthController {
      * @return String
      */
     @PostMapping("/social")
-    public ResponseEntity<String> oauth2Token(@Valid @RequestBody OAuth2AuthorizationCode jwt) {
-        log.info("{}", authParam);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+    public ResponseEntity<String> oauth2Token(@Valid @RequestBody OAuth2AuthorizationCode jwt) throws IOException, InvalidParameterException {
+
+        // Get access token
+        String accessCode = google.requestAccessToken(jwt.getCode());
+        return new ResponseEntity<>(accessCode, HttpStatus.OK);
     }
 }

@@ -18,6 +18,7 @@ public class AppAuthParam {
 
     @Data
     static public class Jwt {
+        private String iss;
         private RSAPrivateKey privateKey;
         private RSAPublicKey publicKey;
         private Integer accessTokenExpiryInSeconds;
@@ -28,5 +29,6 @@ public class AppAuthParam {
     static public class OAuth2Provider {
         private String clientId;
         private String clientSecret;
+        private String redirectUrl;
     }
 }
