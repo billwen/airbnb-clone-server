@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    username: sa
-    password: ${DB_PASSWORD}
+    username: billwen
+    password: ${MYSQL_PASSWORD}
     url: jdbc:h2:mem:airbnb-dev;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
   jpa:
     generate-ddl: true

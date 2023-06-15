@@ -3,9 +3,9 @@ spring:
     cache: false
 
   datasource:
-    url: jdbc:mysql://localhost:3306/airbnb-dev?useUnicode=true&characterEncoding=utf8&useSSL=false
-    username: ${DB_USERNAME:airbnb}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/airbnb-server-dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: billwen
+    password: ${MYSQL_PASSWORD}
     hikari:
       pool-name: Hikari
       auto-commit: false
@@ -34,7 +34,6 @@ spring:
         query:
           fail_on_pagination_over_collection_fetch: true
           in_clause_parameter_padding: true
-
 
 logging:
   level:

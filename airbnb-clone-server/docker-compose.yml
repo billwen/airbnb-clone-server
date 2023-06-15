@@ -1,0 +1,68 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  db:
+    image: mysql:8.0-debian
+    container_name: airbnb-db-dev
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    # CREATE USER 'billwen'@'%' IDENTIFIED BY 'abc123'
+    # GRANT ALL PRIVILEGES ON *.* TO 'billwen'@'%' WITH GRANT OPTION;
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: "airbnb-server-dev"
+      MYSQL_USER: "billwen"
+      TZ: "Asia/Shanghai"
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      airbnb:
+        ipv4_address: 172.118.18.10
+
+
+  # docker exec -it redis /bin/bash 默认进入data文件夹
+  # Connect redis
+  # docker exec -it redis redis-cli
+  cache:
+    image: redis:7.0-bullseye
+    container_name: airbnb-cache-dev
+    command: redis-server
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache_data:/data
+    networks:
+      airbnb:
+        ipv4_address: 172.118.18.11
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "10000:8080"
+    networks:
+      airbnb:
+        ipv4_address: 172.118.18.101
+
+volumes:
+  db_data:
+  cache_data:
+
+networks:
+  airbnb:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.118.18.0/24"
